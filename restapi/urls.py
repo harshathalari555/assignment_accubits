@@ -20,7 +20,7 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('app.urls')),
+    path('', include('app.urls')), # authorbooks and bookslist url
     path('register/', register_view, name='register'),
     path('rest-auth/', include('rest_auth.urls')),
     path('booklist/', views.booklibrary, name='booklist'),
