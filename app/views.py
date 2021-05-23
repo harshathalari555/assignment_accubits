@@ -6,7 +6,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 
+# Create your views here.
+class BookList(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 @api_view(["POST",])
 def register_view(request):
@@ -22,24 +30,38 @@ def register_view(request):
             token = Token.objects.get_or_create(user=account).key
             print(token)
             data['token'] = token
-
         else:
             serializer.errors
 
         return Response(data)
 
-# Create your views here.
+
+class LoginView(GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        django_login(request, user)
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key}, status=200)
+
+
+class LogoutView(APIView):
+    authentication_classes = (TokenAuthentication, )
+
+    def post(self, request):
+        django_logout(request)
+        return Response(status=204)
+
 class BookList(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminUser]
-
 
 
 def booklibrary(request):
     books = Book.objects.all()
-
     print(books)
     return render(request, 'book.html', {'books': books})
 
