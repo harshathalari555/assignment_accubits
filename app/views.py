@@ -8,6 +8,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
 
 # Create your views here.
 class BookList(viewsets.ModelViewSet):
@@ -55,10 +59,15 @@ class LogoutView(APIView):
         django_logout(request)
         return Response(status=204)
 
-class BookList(viewsets.ModelViewSet):
+class AuthorbooksList(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_fields = ('author',)
 
+    def get_queryset(self):
+        queryset = Book.objects.all()
+        return queryset
 
 def booklibrary(request):
     books = Book.objects.all()

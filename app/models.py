@@ -11,6 +11,7 @@ class Author(models.Model):
     email = models.EmailField()
 
     def __str__(self):
+
         return self.username
 
 class Book(models.Model):

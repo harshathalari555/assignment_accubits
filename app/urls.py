@@ -4,8 +4,9 @@ from django.urls import path,include
 from . import views
 
 router = routers.DefaultRouter()
-router.register('books', viewset=views.BookList)
+router.register('', viewset=views.BookList)
+router.register('author_books', viewset=views.AuthorbooksList)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('books/', include(router.urls))
 ]

@@ -20,9 +20,10 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('books/', include('app.urls')),
+    path('', include('app.urls')),
     path('register/', register_view, name='register'),
     path('rest-auth/', include('rest_auth.urls')),
     path('booklist/', views.booklibrary, name='booklist'),
-    path('book_details/<int:id>/', views.bookdetails, name='book_details')
+    path('book_details/<int:id>/', views.bookdetails, name='book_details'),
+
 ]
